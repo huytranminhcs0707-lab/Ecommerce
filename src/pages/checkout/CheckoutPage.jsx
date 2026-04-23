@@ -3,18 +3,21 @@ import './CheckoutPage.css'
 import axios from 'axios'
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs'
-export function CheckoutPage({ cartItems }) {
+export function CheckoutPage({ cartItems, loadCart }) {
     const [deliveryOptions, setDeliveryOptions] = useState([]);
     const [paymentSummary, setPaymentSummary] = useState(null);
+    const loadPayment = async () => {
+        const response = await axios.get('http://localhost:3000/api/payment-summary');
+
+            setPaymentSummary(response.data);
+  
+    };
     useEffect(()=>{
         axios.get('http://localhost:3000/api/delivery-options?expand=estimatedDeliveryTime')
         .then((response)=>{
             setDeliveryOptions(response.data);
         });
-          axios.get('http://localhost:3000/api/payment-summary')
-        .then((response)=>{
-            setPaymentSummary(response.data);
-        });
+        loadPayment();
     },[]);
     return (
         <>
@@ -82,9 +85,17 @@ export function CheckoutPage({ cartItems }) {
                                             <div className="delivery-options-title">
                                                 Choose a delivery option:
                                             </div>
+
                                             {deliveryOptions.map((deliveryOption)=>{
+                                                const updateDeliveryOption = async () => {
+                                                   await axios.put(`http://localhost:3000/api/cart-items/${cartItem.productId}`, {
+                                                        deliveryOptionId: deliveryOption.id
+                                                    });
+                                                    await loadCart();
+                                                    await loadPayment();
+                                                };
                                                 return(
-                                            <div key = {deliveryOption.id} className="delivery-option">
+                                            <div key = {deliveryOption.id} className="delivery-option" onClick={updateDeliveryOption} >
                                                 <input type="radio" 
                                                 checked ={deliveryOption.id === cartItem.deliveryOptionId}
                                                     className="delivery-option-input"
