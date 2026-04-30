@@ -3,9 +3,11 @@ import './CheckoutPage.css'
 import axios from 'axios'
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs'
+import { useNavigate } from 'react-router';
 export function CheckoutPage({ cartItems, loadCart }) {
     const [deliveryOptions, setDeliveryOptions] = useState([]);
     const [paymentSummary, setPaymentSummary] = useState(null);
+    const navigate = useNavigate();
     const loadPayment = async () => {
         const response = await axios.get('http://localhost:3000/api/payment-summary');
 
@@ -18,7 +20,7 @@ export function CheckoutPage({ cartItems, loadCart }) {
             setDeliveryOptions(response.data);
         });
         loadPayment();
-    },[]);
+    },[cartItems]);
     return (
         <>
             <title>Checkout</title>
@@ -51,6 +53,10 @@ export function CheckoutPage({ cartItems, loadCart }) {
                             const selectedDeliveryOption = deliveryOptions.find((deliveryOption) => {
                                 return deliveryOption.id === cartItem.deliveryOptionId;
                             });
+                            const deleteCartItems = async () => {
+                                await axios.delete(`http://localhost:3000/api/cart-items/${cartItem.productId}`);
+                                await loadCart();
+                            };
                             return (
                                 <div key={cartItem.productId} className="cart-item-container">
                                     <div className="delivery-date">
@@ -75,7 +81,7 @@ export function CheckoutPage({ cartItems, loadCart }) {
                                                 <span className="update-quantity-link link-primary">
                                                     Update
                                                 </span>
-                                                <span className="delete-quantity-link link-primary">
+                                                <span className="delete-quantity-link link-primary" onClick={deleteCartItems}>
                                                     Delete
                                                 </span>
                                             </div>
@@ -92,7 +98,7 @@ export function CheckoutPage({ cartItems, loadCart }) {
                                                         deliveryOptionId: deliveryOption.id
                                                     });
                                                     await loadCart();
-                                                    await loadPayment();
+                                            
                                                 };
                                                 return(
                                             <div key = {deliveryOption.id} className="delivery-option" onClick={updateDeliveryOption} >
@@ -147,8 +153,12 @@ export function CheckoutPage({ cartItems, loadCart }) {
                             <div>Order total:</div>
                             <div className="payment-summary-money">${paymentSummary.totalCostCents/100}</div>
                         </div>
-
-                        <button className="place-order-button button-primary">
+                        
+                        <button className="place-order-button button-primary" onClick={async () => {
+                            await axios.post('http://localhost:3000/api/orders');
+                            await loadCart();
+                            navigate('/orders');
+                        }}>
                             Place your order
                         </button>
                     </div>
