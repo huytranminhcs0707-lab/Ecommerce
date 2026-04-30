@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 export function OrdersPage({ cartItems }) {
     const [orders, setOrders] = useState([]);
     useEffect(() => {
-        axios.get('http://localhost:3000/api/orders?expand=products')
+        axios.get('https://ecommerce-naym.onrender.com/api/orders?expand=products')
             .then((response) => {
                 setOrders(response.data);
             });

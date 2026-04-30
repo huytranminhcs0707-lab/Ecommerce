@@ -9,13 +9,13 @@ export function CheckoutPage({ cartItems, loadCart }) {
     const [paymentSummary, setPaymentSummary] = useState(null);
     const navigate = useNavigate();
     const loadPayment = async () => {
-        const response = await axios.get('http://localhost:3000/api/payment-summary');
+        const response = await axios.get('https://ecommerce-naym.onrender.com/api/payment-summary');
 
             setPaymentSummary(response.data);
   
     };
     useEffect(()=>{
-        axios.get('http://localhost:3000/api/delivery-options?expand=estimatedDeliveryTime')
+        axios.get('https://ecommerce-naym.onrender.com/api/delivery-options?expand=estimatedDeliveryTime')
         .then((response)=>{
             setDeliveryOptions(response.data);
         });
@@ -54,7 +54,7 @@ export function CheckoutPage({ cartItems, loadCart }) {
                                 return deliveryOption.id === cartItem.deliveryOptionId;
                             });
                             const deleteCartItems = async () => {
-                                await axios.delete(`http://localhost:3000/api/cart-items/${cartItem.productId}`);
+                                await axios.delete(`https://ecommerce-naym.onrender.com/api/cart-items/${cartItem.productId}`);
                                 await loadCart();
                             };
                             return (
@@ -94,7 +94,7 @@ export function CheckoutPage({ cartItems, loadCart }) {
 
                                             {deliveryOptions.map((deliveryOption)=>{
                                                 const updateDeliveryOption = async () => {
-                                                   await axios.put(`http://localhost:3000/api/cart-items/${cartItem.productId}`, {
+                                                   await axios.put(`https://ecommerce-naym.onrender.com/api/cart-items/${cartItem.productId}`, {
                                                         deliveryOptionId: deliveryOption.id
                                                     });
                                                     await loadCart();
@@ -155,7 +155,7 @@ export function CheckoutPage({ cartItems, loadCart }) {
                         </div>
                         
                         <button className="place-order-button button-primary" onClick={async () => {
-                            await axios.post('http://localhost:3000/api/orders');
+                            await axios.post('https://ecommerce-naym.onrender.com/api/orders');
                             await loadCart();
                             navigate('/orders');
                         }}>

@@ -9,7 +9,7 @@ import axios from 'axios'
 function App() {
   const [cartItems, setCartItems] = useState([]);
    const loadCart = async () => {
-      const response = await axios.get('http://localhost:3000/api/cart-items?expand=product');
+      const response = await axios.get('https://ecommerce-naym.onrender.com/api/cart-items?expand=product');
         setCartItems(response.data);
     };
   useEffect(() => {

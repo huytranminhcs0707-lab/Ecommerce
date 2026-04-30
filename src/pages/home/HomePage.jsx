@@ -7,7 +7,7 @@ export function HomePage({cartItems, loadCart}) {
     const [products,setProducts] = useState([]);
    
     useEffect(() => {
-   axios.get('http://localhost:3000/api/products')
+   axios.get('https://ecommerce-naym.onrender.com/api/products')
         .then((response) => {
              setProducts(response.data);
         });
